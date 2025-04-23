@@ -22,19 +22,28 @@ def get_orders():
         print("Error fetching orders:", e)
         return []
 
-def send_order_notification(order):
-    message = f"Новый заказ №{order['number']}\n\n"
-    message += f"Имя клиента: {order['client'].get('first_name', '')}\n"
-    message += f"Фамилия клиента: {order['client'].get('last_name', '')}\n"
-    message += f"Адрес заказа: {order['shipping_address'].get('address', '')}\n"
-    message += f"Способ доставки: {order.get('delivery_variant_name', '')}\n"
-    message += "Состав заказа:\n"
-    for idx, item in enumerate(order['order_lines'], 1):
-        price = item.get('price', '—')
-        message += f"  {idx}. {item['title']}. Кол-во: {item['quantity']} шт. Цена: {price} руб\n"
-    message += f"Способ оплаты: {order.get('payment_gateway_name', '')}\n"
-    message += f"Сумма: {order['total_price']} руб\n"
-    bot.send_message(chat_id=CHAT_ID, text=message)
+def first_name = order.get('client', {}).get('first_name', '—')
+last_name = order.get('client', {}).get('last_name', '—')
+address = order.get('shipping_address', {}).get('address', '—')
+delivery = order.get('delivery_variant_name', '—')
+payment = order.get('payment_gateway_name', '—')
+
+message = f"Новый заказ №{order['number']}\n\n"
+message += f"Имя клиента: {first_name}\n"
+message += f"Фамилия клиента: {last_name}\n"
+message += f"Адрес заказа: {address}\n"
+message += f"Способ доставки: {delivery}\n"
+message += "Состав заказа:\n"
+
+for idx, item in enumerate(order.get('order_lines', []), 1):
+    title = item.get('title', '—')
+    quantity = item.get('quantity', '—')
+    price = item.get('price') or item.get('sale_price') or item.get('full_price') or '—'
+    message += f"  {idx}. {title}. Кол-во: {quantity} шт. Цена: {price} руб\n"
+
+message += f"Способ оплаты: {payment}\n"
+message += f"Сумма: {order.get('total_price', '—')} руб\n"
+
 
 def run():
     seen = set()
