@@ -30,7 +30,8 @@ def send_order_notification(order):
     message += f"Способ доставки: {order.get('delivery_variant_name', '')}\n"
     message += "Состав заказа:\n"
     for idx, item in enumerate(order['order_lines'], 1):
-        message += f"  {idx}. {item['title']}. Кол-во: {item['quantity']} шт. Цена: {item['price']} руб\n"
+        price = item.get('price', '—')
+        message += f"  {idx}. {item['title']}. Кол-во: {item['quantity']} шт. Цена: {price} руб\n"
     message += f"Способ оплаты: {order.get('payment_gateway_name', '')}\n"
     message += f"Сумма: {order['total_price']} руб\n"
     bot.send_message(chat_id=CHAT_ID, text=message)
